@@ -168,7 +168,7 @@ class WebkitLoad (Foundation.NSObject, WebKit.protocols.WebFrameLoadDelegate):
 
         req = Foundation.NSMutableURLRequest.requestWithURL_(nsurl)
 
-        if self.options.cookieFile or self.options.cookieData:
+        if self.options.cookieFile or self.options.cookieData or self.options.cookieRaw:
             cookie = ''
             if self.options.cookieFile:
                 try:
@@ -180,6 +180,8 @@ class WebkitLoad (Foundation.NSObject, WebKit.protocols.WebFrameLoadDelegate):
                 if cookie:
                     cookie += '; '
                 cookie += '; '.join(self.options.cookieData)
+            if self.options.cookieRaw:
+                cookie = self.options.cookieRaw
 
             req.setValue_forHTTPHeaderField_(cookie, 'Cookie')
 
@@ -409,6 +411,10 @@ Examples:
         "--cookie", action="append", type="string", dest="cookieData",
         help="specify a cookie name-value pair (multiple --cookie is allowed)",
         metavar="NAME=VALUE")
+    group.add_option(
+        "--cookie-raw", type="string", dest="cookieRaw",
+        help="specify a raw cookie header value",
+        metavar="COOKIE")
     group.add_option(
         "--no-cookies", action="store_true",
         help="explicitly empty the Cookie: header (Safari's cookies are used by default)")
